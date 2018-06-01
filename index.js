@@ -6,23 +6,19 @@ let ApiAiApp = require('actions-on-google').ApiAiApp;
 let express = require('express');
 let bodyParser = require('body-parser');
 
-let Mailchimp = require('./mailchimp.js')
-let mailchimp = new Mailchimp(process.env.MAILCHIMP_API_KEY)
+let Mailchimp = require('./mailchimp.js');
+let mailchimp = new Mailchimp(process.env.MAILCHIMP_API_KEY);
 
 let app = express();
 app.use(bodyParser.json({type: 'application/json'}));
 
 // API.AI actions
-const UNRECOGNIZED_DEEP_LINK = 'deeplink.unknown';
 const CREATE_CAMPAIGN = 'create.campaign';
-const LIST_SELECTED = "list.selected";
-const EMAIL_BODY_GIVEN = "email.body.given";
+const LIST_SELECTED = 'list.selected';
+const EMAIL_BODY_GIVEN = 'email.body.given';
 
 var last_question_asked;
 var current_campaign_id;
-
-// API.AI parameter names
-const CATEGORY_ARGUMENT = 'category';
 
 app.post('/', function (request, response) {
   const assistant = new ApiAiApp({request: request, response: response});
@@ -40,7 +36,7 @@ app.post('/', function (request, response) {
   }
 
   function handleError(error) {
-    console.log(error)
+    console.log(error);
     assistant.tell('Sorry, something went wrong');
     return;
   }
@@ -58,7 +54,7 @@ app.post('/', function (request, response) {
 
   function handleEmailBodyGiven() {
     let email_body = assistant.getRawInput();
-    mailchimp.editCampaign(email_body, current_campaign_id, handleError, handleCampaignEdit)
+    mailchimp.editCampaign(email_body, current_campaign_id, handleError, handleCampaignEdit);
     return;
   }
 
@@ -80,7 +76,7 @@ app.post('/', function (request, response) {
         } else {
           let list_items = lists.map(function(list){
             return assistant.buildOptionItem(list.id)
-              .setTitle(list.name)
+              .setTitle(list.name);
           });
           assistant.askWithList('Which list should we send the campaign to?',
           assistant.buildList('MailChimp Lists')

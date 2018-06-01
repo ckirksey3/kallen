@@ -1,9 +1,9 @@
-var api_key, Mailchimp_SDK, mailchimp_api
+var Mailchimp_SDK, mailchimp_api;
 
 var MailChimp = function(api_key) {
-    Mailchimp_SDK = require('mailchimp-api-v3')
+    Mailchimp_SDK = require('mailchimp-api-v3');
     mailchimp_api = new Mailchimp_SDK(api_key);
-}
+};
 
 /**
  * Creates a new email marketing campaign in the user's MailChimp account
@@ -12,21 +12,21 @@ var MailChimp = function(api_key) {
  */
 MailChimp.prototype.createCampaign = function (list_id, error_callback, success_callback) {
     mailchimp_api.post('campaigns', {
-        "recipients":{"list_id":`${list_id}`},
-        "type":"regular",
-        "settings":{
-          "subject_line":"Update",
-          "reply_to":"ckirksey3@gmail.com",
-          "from_name":"Customer Service"
+        'recipients':{'list_id':`${list_id}`},
+        'type':'regular',
+        'settings':{
+          'subject_line':'Update',
+          'reply_to':'ckirksey3@gmail.com',
+          'from_name':'Customer Service'
     }
     })
     .then(function(results) {
-      success_callback(results.id)
+      success_callback(results.id);
     })
     .catch(function (err) {
-      error_callback(err)
-    })
-}
+      error_callback(err);
+    });
+};
 
 /**
  * Edits an existing email marketing campaign in the user's MailChimp account
@@ -38,13 +38,13 @@ MailChimp.prototype.editCampaign = function (email_body, campaign_id, error_call
     mailchimp_api.put(`campaigns/${campaign_id}/content`, {
       'html': `<p>${email_body}<./p>`
     })
-    .then(function(results) {
-      success_callback(campaign_id)
+    .then(function() {
+      success_callback(campaign_id);
     })
     .catch(function (err) {
-      error_callback(err)
-    })
-}
+      error_callback(err);
+    });
+};
 
 /**
  * Sends an email marketing campaign in the user's MailChimp account
@@ -54,13 +54,13 @@ MailChimp.prototype.editCampaign = function (email_body, campaign_id, error_call
  */
 MailChimp.prototype.sendCampaign = function (campaign_id, error_callback, success_callback) {
     mailchimp_api.post(`campaigns/${campaign_id}/actions/send`)
-    .then(function(results) {
-      success_callback()
+    .then(function() {
+      success_callback();
     })
     .catch(function (err) {
-      error_callback(err)
-    })
-}
+      error_callback(err);
+    });
+};
 
 /**
  * Gets a list of the distribution lists in the user's MailChimp account
@@ -70,12 +70,12 @@ MailChimp.prototype.sendCampaign = function (campaign_id, error_callback, succes
 MailChimp.prototype.getLists = function (error_callback, success_callback) {
     mailchimp_api.get('lists')
     .then(function(results) {
-      success_callback(results.lists)
+      success_callback(results.lists);
     })
     .catch(function (err) {
-      error_callback(err)
-    })
-}
+      error_callback(err);
+    });
+};
 
 
-module.exports = MailChimp
+module.exports = MailChimp;
