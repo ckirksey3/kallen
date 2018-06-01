@@ -6,8 +6,8 @@ let ApiAiApp = require('actions-on-google').ApiAiApp;
 let express = require('express');
 let bodyParser = require('body-parser');
 
-let Mailchimp = require('./mailchimp.js');
-let mailchimp = new Mailchimp(process.env.MAILCHIMP_API_KEY);
+// let HikingAPI = require('./hiking-api.js');
+// let hikingAPI = new HikingAPI(process.env.HIKING_API_KEY);
 
 let app = express();
 app.use(bodyParser.json({type: 'application/json'}));
@@ -42,7 +42,7 @@ app.post('/', function (request, response) {
   }
 
   function handleCampaignEdit(campaign_id) {
-    mailchimp.sendCampaign(campaign_id, handleError, handleCampaignSend);
+    // mailchimp.sendCampaign(campaign_id, handleError, handleCampaignSend);
     return;
   }
 
@@ -54,36 +54,16 @@ app.post('/', function (request, response) {
 
   function handleEmailBodyGiven() {
     let email_body = assistant.getRawInput();
-    mailchimp.editCampaign(email_body, current_campaign_id, handleError, handleCampaignEdit);
+    // mailchimp.editCampaign(email_body, current_campaign_id, handleError, handleCampaignEdit);
     return;
   }
 
   function handleListSelection() {
     let answer = assistant.getSelectedOption();
     if(last_question_asked == 'which_list_to_send_to') {
-      mailchimp.createCampaign(answer, handleError, handleCampaignCreation);
+      // mailchimp.createCampaign(answer, handleError, handleCampaignCreation);
     }
     return;
-  }
-
-  function createAndSendCampaign (assistant) {
-      mailchimp.getLists(handleError, function(lists) {
-        if(lists.length < 1) {
-          assistant.tell('You need to create a list in MailChimp before we can send a campaign');
-        }
-        else if(lists.length == 1) {
-          mailchimp.createCampaign(lists[0].id, handleError, handleCampaignCreation);
-        } else {
-          let list_items = lists.map(function(list){
-            return assistant.buildOptionItem(list.id)
-              .setTitle(list.name);
-          });
-          assistant.askWithList('Which list should we send the campaign to?',
-          assistant.buildList('MailChimp Lists')
-           .addItems(list_items));
-          last_question_asked = 'which_list_to_send_to';
-        }
-      });
   }
 
   let actionMap = new Map();

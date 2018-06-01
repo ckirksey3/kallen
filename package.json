@@ -12,10 +12,12 @@
     "actions-on-google": "^1.0.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
-    "mailchimp-api-v3": "^1.7.0"
+    "request": "^2.81.0",
+    "request-promise-native": "^1.0.5"
   },
   "devDependencies": {
-    "semistandard": "^9.1.0"
+    "semistandard": "^9.1.0",
+    "jshint": "^2.9.5"
   },
   "scripts": {
     "lint": "jshint .",
