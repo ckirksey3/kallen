@@ -6,70 +6,45 @@ let ApiAiApp = require('actions-on-google').ApiAiApp;
 let express = require('express');
 let bodyParser = require('body-parser');
 
-// let HikingAPI = require('./hiking-api.js');
-// let hikingAPI = new HikingAPI(process.env.HIKING_API_KEY);
+let HikingAPI = require('./hiking-api.js');
+let hikingAPI = new HikingAPI(process.env.HIKING_API_KEY);
 
 let app = express();
 app.use(bodyParser.json({type: 'application/json'}));
 
 // API.AI actions
-const CREATE_CAMPAIGN = 'create.campaign';
-const LIST_SELECTED = 'list.selected';
-const EMAIL_BODY_GIVEN = 'email.body.given';
+const TRAILS_REQUESTED = 'trails.requested';
 
-var last_question_asked;
-var current_campaign_id;
+let last_question_asked;
+let current_campaign_id;
 
 app.post('/', function (request, response) {
   const assistant = new ApiAiApp({request: request, response: response});
   console.log('Request headers: ' + JSON.stringify(request.headers));
   console.log('Request body: ' + JSON.stringify(request.body));
 
-  /**
-   * Creates a new email marketing campaign in the user's MailChimp account
-   * @param {Function} error_callback
-   * @param {Function} success_callback
-   */
-  function handleCampaignSend() {
-    assistant.tell('Congrats! We sent the campaign');
-    return;
-  }
-
-  function handleError(error) {
+	function handleError(error) {
     console.log(error);
     assistant.tell('Sorry, something went wrong');
     return;
   }
 
-  function handleCampaignEdit(campaign_id) {
-    // mailchimp.sendCampaign(campaign_id, handleError, handleCampaignSend);
-    return;
-  }
-
-  function handleCampaignCreation(campaign_id) {
-    current_campaign_id = campaign_id;
-    assistant.ask('What should we say in the email?');
-    return;
-  }
-
-  function handleEmailBodyGiven() {
-    let email_body = assistant.getRawInput();
-    // mailchimp.editCampaign(email_body, current_campaign_id, handleError, handleCampaignEdit);
-    return;
-  }
-
-  function handleListSelection() {
-    let answer = assistant.getSelectedOption();
-    if(last_question_asked == 'which_list_to_send_to') {
-      // mailchimp.createCampaign(answer, handleError, handleCampaignCreation);
-    }
+  function handleTrailsRequested() {
+    assistant.tell('Some trails are coming right up!');
+		hikingAPI.getTrails(40.0274, -105.2519).then(function (trails) {
+			let responseMessage = 'Some nearby trails include ';
+			let trail_count = 0;
+			while (trail_count < 3 && trail_count < trails.length) {
+				responseMessage += trails[trail_count].name + ' ';
+			}
+			assistant.tell(responseMessage);
+		})
+		.catch(handleError);
     return;
   }
 
   let actionMap = new Map();
-  actionMap.set(CREATE_CAMPAIGN, createAndSendCampaign);
-  actionMap.set(LIST_SELECTED, handleListSelection);
-  actionMap.set(EMAIL_BODY_GIVEN, handleEmailBodyGiven);
+  actionMap.set(TRAILS_REQUESTED, handleTrailsRequested);
   assistant.handleRequest(actionMap);
 });
 

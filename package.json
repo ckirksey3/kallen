@@ -6,7 +6,7 @@
   "license": "MIT",
   "author": "Caleb Kirksey",
   "engines": {
-    "node": "~4.2"
+    "node": "~8.9.4"
   },
   "dependencies": {
     "actions-on-google": "^1.0.0",

@@ -1,8 +1,8 @@
-var api_key;
+let api_key;
 
 const request = require('request-promise-native');
 
-var HikingAPI = function(hiking_project_api_key) {
+let HikingAPI = function(hiking_project_api_key) {
     api_key = hiking_project_api_key;
 };
 
@@ -12,7 +12,7 @@ var HikingAPI = function(hiking_project_api_key) {
  * @param {string} long - longitude of location
  */
 HikingAPI.prototype.getTrails = function (lat, long) {
-	var options = {
+	let options = {
     uri: 'https://www.hikingproject.com/data/get-trails',
 		qs: {
 			key: api_key,
@@ -23,7 +23,8 @@ HikingAPI.prototype.getTrails = function (lat, long) {
 		json: true
 	};
 	return new Promise(function(resolve, reject) {
-		request(options).then(function (trails) {
+		request(options)
+		.then(function (trails) {
 			resolve(trails.trails);
 		})
 		.catch(function (err) {
